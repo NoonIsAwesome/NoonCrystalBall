@@ -126,15 +126,26 @@
     .fortune{ margin-top:8px; font-weight:800; text-align:center; min-height:1.6em }
     .fortune .tag{ padding:.2em .6em; border-radius:999px; margin-right:.4em; background:rgba(255,255,255,.75); border:1px solid rgba(255,255,255,.22) }
 
-    .da{background:#7df0a3;color:#072413;border:none}
-    .zh{background:#b9e3ff;color:#071a28;border:none}
-    .xiao{background:#ffe1a8;color:#3b2405;border:none}
-    .ji{background:#e0d7ff;color:#1a1430;border:none}
-    .ultra{background:#62ffc9;color:#01251a;border:none}
-    .cosmo{background:#ff9df2;color:#2b0031;border:none}
-    .p87{background:#d4ff7d;color:#1e2a00;border:none}
-    .chiik{background:#ffd2e1;color:#3a0f20;border:none}
-    .chihua{background:#ffd7b3;color:#3b1a00;border:none}
+    .da     {background:#7df0a3;color:#072413;border:none}
+    .zh     {background:#b9e3ff;color:#071a28;border:none}
+    .xiao   {background:#ffe1a8;color:#3b2405;border:none}
+    .ji     {background:#e0d7ff;color:#1a1430;border:none}
+    .ultra  {background:#62ffc9;color:#01251a;border:none}
+    .cosmo  {background:#ff9df2;color:#2b0031;border:none}
+    .p87    {background:#d4ff7d;color:#1e2a00;border:none}
+    .chiik  {background:#ffd2e1;color:#3a0f20;border:none}
+    .chihua {background:#ffd7b3;color:#3b1a00;border:none}
+    .xx     { background:#f3f4f6; color:#111827; border:none } /* 小小吉 */
+    .moyu   { background:#c9fff1; color:#03322a; border:none } /* 摸魚吉 */
+    .enc    { background:#ffe7b7; color:#3a2500; border:none } /* 奇遇吉 */
+    .cafe   { background:#ffd1b3; color:#3b1a00; border:none } /* 咖啡吉 */
+    .opa    { background:#d6f5b3; color:#14240a; border:none } /* 歐趴吉 */
+    .wifi   { background:#d2e9ff; color:#0a1f33; border:none } /* 網速吉 */
+    .wallet { background:#e6ffe0; color:#0f2b0a; border:none } /* 省錢吉 */
+    .nap    { background:#e8ddff; color:#1a1033; border:none } /* 小睡吉 */
+    .brave  { background:#ffe0e0; color:#3b0f0f; border:none } /* 勇者吉 */
+    .cat    { background:#fff0b3; color:#2b2000; border:none } /* 貓咪吉 */
+    .ping   { background:#eaf2ff; color:#08121f; border:none } /* 平安吉 */
 
     @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
     @keyframes pulse{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:.95;transform:scale(1.03)}}
@@ -171,7 +182,7 @@
     </div>
 
     <div class="controls">
-      <a class="btn-ghost" id="likeBtn" href="#" target="_blank" rel="noopener" aria-disabled="true">幫我按讚留言🫶🏻</a>
+      <a class="btn-ghost" id="likeBtn" href="#" target="_blank" rel="noopener" aria-disabled="true">幫我按讚留言👍🏻</a>
       <a class="btn-ghost" id="subBtn"
          href="https://www.youtube.com/@Noon_0606?sub_confirmation=1"
          target="_blank" rel="noopener">📺 訂閱沐橙</a>
@@ -205,14 +216,32 @@
     const fortunes = [
       { key:'ultra', tag:'超級大吉', weight:2,  text:'宇宙訊號加持！想做的事現在開始做，開外掛的一天。' },
       { key:'cosmo', tag:'宇宙大吉', weight:1,  text:'星際都在排隊幫你，願望清單打開，逐條勾掉吧～' },
-      { key:'da',    tag:'大吉',     weight:8,  text:'今天是非常幸運的一天，去買張彩券吧！（中獎別忘了我哦）' },
-      { key:'zh',    tag:'中吉',     weight:32, text:'一切順風順水，記得把好運分享給身邊的人。' },
-      { key:'xiao',  tag:'小吉',     weight:26, text:'小確幸會不經意降臨，耐心一點，事情會漸入佳境。' },
-      { key:'ji',    tag:'吉',       weight:20, text:'平穩踏實的一天，按步就班也能積沙成塔。' },
-      { key:'p87',   tag:'87%吉',    weight:6,  text:'成功率 87%！剩下 13% 靠你的帥氣與可愛來補滿。' },
-      { key:'chiik', tag:'吉伊卡哇', weight:3,  text:'今天是軟綿綿加分日，對自己好一點，萬事變可愛。' },
+      { key:'da',    tag:'大吉',     weight:6,  text:'今天是非常幸運的一天，去買張彩券吧！（中獎別忘了我哦）' },
+      { key:'zh',    tag:'中吉',     weight:18, text:'一切順風順水，記得把好運分享給身邊的人。' },
+      { key:'xiao',  tag:'小吉',     weight:14, text:'小確幸會不經意降臨，耐心一點，事情會漸入佳境。' },
+    
+      // 幽默款（新增）
+      { key:'xx',    tag:'小小吉',   weight:10, text:'今天每過一分鐘就經過 60 秒，非常普通但踏實。' },
+      { key:'moyu',  tag:'摸魚吉',   weight:5,  text:'效率海豚式呼吸：上浮一下就好，摸完魚靈感更旺。' },
+      { key:'enc',   tag:'奇遇吉',   weight:4,  text:'會遇到小驚喜——像口袋多出一張折扣碼。' },
+      { key:'cafe',  tag:'咖啡吉',   weight:3,  text:'第一杯就對頻，靈感像義式濃縮一樣濃。' },
+      { key:'opa',   tag:'歐趴吉',   weight:3,  text:'今天超適合交作業/考試，交前記得再檢查一次！' },
+    
+      { key:'ji',    tag:'吉',       weight:11, text:'平穩踏實的一天，按步就班也能積沙成塔。' },
+      { key:'p87',   tag:'87%吉',    weight:4,  text:'成功率 87%！剩下 13% 靠你的帥氣與可愛來補滿。' },
+      { key:'chiik', tag:'吉伊卡哇', weight:2,  text:'今天是軟綿綿加分日，對自己好一點，萬事變可愛。' },
       { key:'chihua',tag:'吉娃娃',   weight:2,  text:'精神滿滿汪汪叫！用小體型衝大能量，勇敢出擊。' },
+    
+      // 再多幾張
+      { key:'wifi',  tag:'網速吉',   weight:3,  text:'今天 Wi-Fi 特別聽話，上傳靈感零延遲。' },
+      { key:'wallet',tag:'省錢吉',   weight:3,  text:'想買的剛好特價，想吃的剛好有人請。' },
+      { key:'nap',   tag:'小睡吉',   weight:3,  text:'午覺 20 分，精神 +50，黑眼圈 -30。' },
+      { key:'brave', tag:'勇者吉',   weight:3,  text:'按下那個一直拖的「送出」鍵吧，世界會回應。' },
+      { key:'cat',   tag:'貓咪吉',   weight:2,  text:'被貓盯著看三秒，幸運值自動 +9。' },
+      { key:'ping',  tag:'平安吉',   weight:1,  text:'手機掉了也在口袋，嚇你一下提醒要戴好微笑。' },
     ];
+
+
 
     function weightedPick(items){
       const total = items.reduce((s,i)=>s+i.weight,0);
