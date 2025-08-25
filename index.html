@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>水晶球占卜｜沐橙 Noon 🌞</title>
+  <style>
+    body{
+      margin:0; min-height:100vh; display:grid; place-items:center;
+      color:#eaf2ff; font-family: ui-rounded, "Noto Sans TC", system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: radial-gradient(1200px 800px at 65% 12%, #162544 0%, #0b0f1a 45%, #060910 100%);
+    }
+    main{ display:grid; place-items:center; gap:14px; padding:24px }
+    .title{ font-weight:800; opacity:.95 }
+
+    .ball-wrap{ position:relative; width:min(86vw, 460px); aspect-ratio:1/1; display:grid; place-items:center }
+
+    /* 右上角靜音鈕（球外） */
+    .muteBtn{
+      position:absolute; top:-10px; right:-10px; z-index:9;
+      background: rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.22);
+      color:#eaf2ff; border-radius:999px;
+      width:42px; height:42px; display:grid; place-items:center;
+      font-size:18px; line-height:1; cursor:pointer;
+      backdrop-filter: blur(4px);
+      box-shadow: 0 8px 28px rgba(124,199,255,.35);
+      transition: transform .15s ease, background .2s ease;
+    }
+    .muteBtn:hover{ transform: translateY(-2px); background: rgba(255,255,255,.22); }
+    .muteBtn[aria-pressed="false"]{ background: rgba(255,255,255,.22); }
+
+    .halo{
+      position:absolute; inset:-6%; border-radius:50%;
+      background: radial-gradient(circle, rgba(124,199,255,.35), rgba(124,199,255,.18) 40%, rgba(0,0,0,0) 72%);
+      filter: blur(10px); animation:pulse 4s ease-in-out infinite; z-index:0;
+    }
+
+    .ball{
+      position:relative; width:100%; height:100%; border-radius:50%; overflow:hidden; cursor:pointer;
+      isolation:isolate;
+      border: 1.2px solid rgba(255,255,255,.28);
+      transition: transform .2s ease, box-shadow .25s ease;
+      animation: float 6s ease-in-out infinite;
+      z-index:1;
+      background:
+        radial-gradient(120% 120% at 30% 20%, rgba(255,255,255,.28), rgba(0,0,0,.5)),
+        radial-gradient(80% 80% at 70% 75%, rgba(144,226,255,.25), rgba(208,145,255,.18) 50%, rgba(255,200,150,.15) 70%, transparent 100%);
+      box-shadow: inset 0 0 46px rgba(255,255,255,.18), 0 28px 120px rgba(124,199,255,.38);
+    }
+    .ball:hover{ transform: translateY(-2px); box-shadow: inset 0 0 58px rgba(255,255,255,.24), 0 38px 160px rgba(124,199,255,.55); }
+
+    /* 影片圈：圓形遮罩＋放大裁切 */
+    .videoWrap{ position:absolute; inset:6%; z-index:2; }
+    .videoOval{
+      position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+      width:86%; height:86%; border-radius:50%;
+      -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 74.5%, rgba(0,0,0,0) 75%);
+      mask-image: radial-gradient(circle at 50% 50%, #000 74.5%, rgba(0,0,0,0) 75%);
+      -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
+      -webkit-mask-size:100% 100%; mask-size:100% 100%;
+    }
+
+    /* 封面大頭照（播放時淡出） */
+    .coverImg{
+      position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+      width:120%; height:120%; object-fit:cover; object-position:center;
+      filter: contrast(1.02) saturate(1.04);
+      transition: opacity .25s ease;
+    }
+    body.has-video .coverImg{ opacity:0; pointer-events:none; }
+
+    /* IFrame 容器；初始先隱藏，真正播放才淡入 → 不會看到紅色播放鍵 */
+    #ytFrame,
+    .videoOval iframe{
+      position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+      width:180%; height:180%;
+      border:0; background:#000;
+    }
+    #ytFrame{ opacity:0; transition: opacity .25s ease; }
+    body.has-video #ytFrame{ opacity:1; }
+
+    /* 點擊層（抽籤） */
+    .hit{ position:absolute; inset:0; z-index:6; background:transparent; border:0; cursor:pointer; }
+
+    /* —— 置中提示文案（與封面同遮罩） —— */
+    .placeholder{
+      position:absolute; inset:6%; display:grid; place-items:center; text-align:center; z-index:3;
+      -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 74.5%, rgba(0,0,0,0) 75%);
+      mask-image: radial-gradient(circle at 50% 50%, #000 74.5%, rgba(0,0,0,0) 75%);
+      -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
+      -webkit-mask-size:100% 100%; mask-size:100% 100%;
+      pointer-events:none;
+    }
+    .placeholder p{
+      margin:0; padding:0 18px; font-weight:800; line-height:1.5;
+      text-shadow: 0 2px 12px rgba(0,0,0,.35); opacity:.95;
+    }
+    .hidden{ display:none !important; }
+
+    .glassOverlay{
+      position:absolute; inset:8%; border-radius:50%; pointer-events:none; z-index:4;
+      background:
+        radial-gradient(180% 130% at 28% 18%, rgba(255,255,255,.85), rgba(255,255,255,.22) 24%, transparent 48%),
+        conic-gradient(from -45deg at 50% 50%, rgba(255,180,240,.18), rgba(150,220,255,.18), rgba(255,220,170,.14), rgba(255,180,240,.18));
+      mix-blend-mode: screen;
+    }
+    .rimOverlay{
+      position:absolute; inset:8%; border-radius:50%; pointer-events:none; z-index:5;
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,.13), inset 0 0 55px rgba(150,220,255,.25);
+    }
+
+    .controls{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:12px }
+    .btn-ghost{ 
+      background: rgba(255,255,255,.12); color:#eaf2ff; 
+      border:1px solid rgba(255,255,255,.18); box-shadow:none;
+      border-radius: 12px; padding: 12px 20px; font-size: 1.05rem; font-weight: 700; letter-spacing: .5px;
+      transition: background .2s ease, transform .15s ease; text-decoration:none; display:inline-flex; align-items:center; gap:.4em;
+    }
+    .btn-ghost:hover{ background: rgba(255,255,255,.22); transform: translateY(-2px); }
+    .btn-ghost[aria-disabled="true"]{ opacity:.55; pointer-events:none; }
+
+    .fortune{ margin-top:8px; font-weight:800; text-align:center; min-height:1.6em }
+    .fortune .tag{ padding:.2em .6em; border-radius:999px; margin-right:.4em; background:rgba(255,255,255,.75); border:1px solid rgba(255,255,255,.22) }
+
+    .da{background:#7df0a3;color:#072413;border:none}
+    .zh{background:#b9e3ff;color:#071a28;border:none}
+    .xiao{background:#ffe1a8;color:#3b2405;border:none}
+    .ji{background:#e0d7ff;color:#1a1430;border:none}
+    .ultra{background:#62ffc9;color:#01251a;border:none}
+    .cosmo{background:#ff9df2;color:#2b0031;border:none}
+    .p87{background:#d4ff7d;color:#1e2a00;border:none}
+    .chiik{background:#ffd2e1;color:#3a0f20;border:none}
+    .chihua{background:#ffd7b3;color:#3b1a00;border:none}
+
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+    @keyframes pulse{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:.95;transform:scale(1.03)}}
+  </style>
+</head>
+<body>
+  <main>
+    <div class="title">水晶球占卜 · 沐橙 Noon 🌞</div>
+
+    <div class="ball-wrap" aria-label="水晶球">
+      <!-- 🔇 靜音切換鈕（預設靜音） -->
+      <button id="muteBtn" class="muteBtn" aria-pressed="true" aria-label="切換靜音">🔇</button>
+
+      <div class="halo"></div>
+      <div class="ball" id="ball">
+        <div class="videoWrap">
+          <div class="videoOval">
+            <!-- ✅ 一開始顯示的封面大頭照（換成你的圖片路徑） -->
+            <img id="coverImg" class="coverImg" src="assets/cover.png" alt="封面大頭照">
+            <!-- IFrame API 會把 iframe 插進這裡 -->
+            <div id="ytFrame" title="Noon Shorts"></div>
+          </div>
+        </div>
+
+        <!-- ✅ 置中提示文字（點擊後隱藏） -->
+        <div class="placeholder" id="ph">
+          <p>✨今日運勢占卜<br>抽取一支適合你今天的影片😆</p>
+        </div>
+
+        <div class="glassOverlay"></div>
+        <div class="rimOverlay"></div>
+        <button class="hit" id="hit" aria-label="抽籤"></button>
+      </div>
+    </div>
+
+    <div class="controls">
+      <a class="btn-ghost" id="likeBtn" href="#" target="_blank" rel="noopener" aria-disabled="true">幫我按讚留言🫶🏻</a>
+      <a class="btn-ghost" id="subBtn"
+         href="https://www.youtube.com/@Noon_0606?sub_confirmation=1"
+         target="_blank" rel="noopener">📺 訂閱沐橙</a>
+    </div>
+
+    <div class="fortune" id="fortuneBox" aria-live="polite"></div>
+  </main>
+
+  <!-- YouTube IFrame API -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+
+  <script>
+    const SHORT_IDS = [
+      "OICiZCFr-sQ","EP1tMHnob24","vQ0jv7T3U2Q","kkOsntsePfc","DjE09GGqdac","4u5Ws4e3Sqs",
+      "ASkjUlgbbKQ","D3GrWAMklOY","9ns6sy75z8c","C0mxnmn8VGo","IIVWDOIPEfc","Skb9MAtFie0",
+      "SFPid6g4HS8","Zs2aZseebHI","0fiIdABz9o4","gtbXhoUTRQI","isk-P7zsbrE","4HriWeU4kSk",
+      "ilK7lm6xH_I","ti9ipIOutig","jMppjUTHcYk","WvOKNgL86fE","pWAq_nIRSZ8","NxIe5Fa5wLo",
+      "VbvxdPJG-A0","BLZ1tSGaa8k","ZIR0tNQh-GY","29bIJDOh3TY","9VOznsKrjuc","uCXYGJ4G9K0",
+      "5kJfeH7dN_k","m6jXUCZyrEc","vMenqbSLyy0","fyCWEkwBLZM","pPhiDr35lfk","CmBZZfjcuv8",
+      "6aHEBQScMEU","wEFQqL09Gpw","bJzAF9Xb7GE","b9t01c8S-iY","rNnLmVmTruY","DxQAka3DEoM",
+      "SU58r2YU7mI","TaAlg3Uuq2g","-gca0V-C9tI","honKOkybo98","dnC1oQwze3M","3olMsDQ7CTg",
+      "ILy9eUsl-Pw","LQ6cd9_qbsc","kn-B30dHTfU","7AQKzF4kozM","bkZ7VxKpwPA"
+    ];
+
+    const hit        = document.getElementById('hit');
+    const ph         = document.getElementById('ph');
+    const fortuneBox = document.getElementById('fortuneBox');
+    const likeBtn    = document.getElementById('likeBtn');
+    const muteBtn    = document.getElementById('muteBtn');
+
+    const fortunes = [
+      { key:'ultra', tag:'超級大吉', weight:2,  text:'宇宙訊號加持！想做的事現在開始做，開外掛的一天。' },
+      { key:'cosmo', tag:'宇宙大吉', weight:1,  text:'星際都在排隊幫你，願望清單打開，逐條勾掉吧～' },
+      { key:'da',    tag:'大吉',     weight:8,  text:'今天是非常幸運的一天，去買張彩券吧！（中獎別忘了我哦）' },
+      { key:'zh',    tag:'中吉',     weight:32, text:'一切順風順水，記得把好運分享給身邊的人。' },
+      { key:'xiao',  tag:'小吉',     weight:26, text:'小確幸會不經意降臨，耐心一點，事情會漸入佳境。' },
+      { key:'ji',    tag:'吉',       weight:20, text:'平穩踏實的一天，按步就班也能積沙成塔。' },
+      { key:'p87',   tag:'87%吉',    weight:6,  text:'成功率 87%！剩下 13% 靠你的帥氣與可愛來補滿。' },
+      { key:'chiik', tag:'吉伊卡哇', weight:3,  text:'今天是軟綿綿加分日，對自己好一點，萬事變可愛。' },
+      { key:'chihua',tag:'吉娃娃',   weight:2,  text:'精神滿滿汪汪叫！用小體型衝大能量，勇敢出擊。' },
+    ];
+
+    function weightedPick(items){
+      const total = items.reduce((s,i)=>s+i.weight,0);
+      let r = Math.random()*total;
+      for(const it of items){ if((r -= it.weight) <= 0) return it; }
+      return items[items.length-1];
+    }
+
+    let player, playerReady = false, currentVideoId = null;
+    let isMuted = true; // 預設靜音
+
+    function onYouTubeIframeAPIReady(){
+      player = new YT.Player('ytFrame', {
+        width: '100%', height:'100%',
+        videoId: '',
+        playerVars: { playsinline: 1, controls: 0, rel: 0, modestbranding: 1, loop: 1, fs: 0, disablekb: 1 },
+        events: { 
+          onReady: () => { playerReady = true; if(isMuted) player.mute(); },
+          onStateChange: (e) => {
+            // 真的開始播放才把封面淡出、iframe 淡入（避免紅色播放鍵）
+            if (e.data === YT.PlayerState.PLAYING) {
+              document.body.classList.add('has-video');
+            }
+          }
+        }
+      });
+    }
+    window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
+
+    function pickShort(){
+      return SHORT_IDS[Math.floor(Math.random()*SHORT_IDS.length)];
+    }
+
+    function draw(){
+      if(!playerReady){
+        ph.innerHTML = '<p>播放器載入中…再點一次試試！</p>';
+        return;
+      }
+      const id = pickShort();
+      currentVideoId = id;
+
+      // 用播放清單模式確保循環
+      player.loadPlaylist({ playlist: [id], index:0, startSeconds:0 });
+      player.setLoop(true);
+      player.setShuffle(false);
+      player.playVideo();
+
+      if(isMuted){ player.mute(); } else { player.unMute(); player.setVolume(100); }
+
+      // 隱藏文案；封面會在「開始播放」時自動淡出
+      ph.classList.add('hidden');
+
+      // 顯示籤詩 & 更新留言按鈕
+      const f = weightedPick(fortunes);
+      fortuneBox.innerHTML = `<span class="tag ${f.key}">${f.tag}</span>${f.text}`;
+      likeBtn.href = `https://www.youtube.com/shorts/${id}`;
+      likeBtn.removeAttribute('aria-disabled');
+    }
+
+    function toggleMute(){
+      if(!playerReady) return;
+      isMuted = !isMuted;
+      if(isMuted){
+        player.mute();
+        muteBtn.textContent = '🔇';
+        muteBtn.setAttribute('aria-pressed','true');
+      }else{
+        player.unMute();
+        player.setVolume(100);
+        muteBtn.textContent = '🔊';
+        muteBtn.setAttribute('aria-pressed','false');
+      }
+    }
+
+    hit.addEventListener('click', draw);
+    muteBtn.addEventListener('click', toggleMute);
+  </script>
+</body>
+</html>
