@@ -146,6 +146,13 @@
     .brave  { background:#ffe0e0; color:#3b0f0f; border:none } /* 勇者吉 */
     .cat    { background:#fff0b3; color:#2b2000; border:none } /* 貓咪吉 */
     .ping   { background:#eaf2ff; color:#08121f; border:none } /* 平安吉 */
+    .ghibli{       background:#d9f4e6; color:#0f2a1f; border:none }  /* 吉卜力 */
+    .hange{        background:#ffe6cc; color:#3a1a00; border:none }  /* 漢吉 */
+    .chicken{      background:#fff3a8; color:#3a2b00; border:none }  /* 大吉大利 */
+    .kira{         background:#efd9ff; color:#2a1040; border:none }  /* 吉良吉影 */
+    .kichijoji{    background:#e1ecff; color:#0a1f33; border:none }  /* 吉祥寺 */
+    .jeep{         background:#e3f2d8; color:#162a0f; border:none }  /* 吉普車 */
+    .kilimanjaro{  background:#e5eef7; color:#10243a; border:none }  /* 吉力馬札羅 */
 
     @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
     @keyframes pulse{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:.95;transform:scale(1.03)}}
@@ -163,14 +170,14 @@
       <div class="ball" id="ball">
         <div class="videoWrap">
           <div class="videoOval">
-            <!-- ✅ 一開始顯示的封面大頭照（換成你的圖片路徑） -->
+            <!-- ✅ 一開始顯示的封面大頭照 -->
             <img id="coverImg" class="coverImg" src="assets/cover.avif" alt="封面大頭照">
             <!-- IFrame API 會把 iframe 插進這裡 -->
             <div id="ytFrame" title="Noon Shorts"></div>
           </div>
         </div>
 
-        <!-- ✅ 置中提示文字（點擊後隱藏） -->
+        <!-- ✅ 置中提示文字 -->
         <div class="placeholder" id="ph">
           <p>✨今日運勢占卜<br>抽取一支適合你今天的影片🧙🏻‍♀️</p>
         </div>
@@ -217,12 +224,12 @@
       { key:'ultra', tag:'超級大吉', weight:2,  text:'宇宙訊號加持！想做的事現在開始做，開外掛的一天。' },
       { key:'cosmo', tag:'宇宙大吉', weight:1,  text:'星際都在排隊幫你，願望清單打開，逐條勾掉吧～' },
       { key:'da',    tag:'大吉',     weight:6,  text:'今天是非常幸運的一天，去買張彩券吧！（中獎別忘了我哦）' },
-      { key:'zh',    tag:'中吉',     weight:18, text:'一切順風順水，記得把好運分享給身邊的人。' },
+      { key:'zh',    tag:'中吉',     weight:18, text:'終極一天(?) 出門先看看口袋有沒有莫名其妙多兩百，記得把好運分享給身邊的人。' },
       { key:'xiao',  tag:'小吉',     weight:14, text:'小確幸會不經意降臨，耐心一點，事情會漸入佳境。' },
     
-      // 幽默款（新增）
+      // 搞笑的
       { key:'xx',    tag:'小小吉',   weight:10, text:'今天每過一分鐘就經過 60 秒，非常普通但踏實。' },
-      { key:'moyu',  tag:'摸魚吉',   weight:5,  text:'去廁所大個便吧！認真上班不叫賺錢，那是交換；摸魚才是賺錢！' },
+      { key:'moyu',  tag:'摸魚吉',   weight:5,  text:'去廁所大個便吧！大便的時候滑手機才是賺錢！' },
       { key:'enc',   tag:'奇遇吉',   weight:4,  text:'會遇到小驚喜——像口袋多出一張折扣碼。' },
       { key:'cafe',  tag:'咖啡吉',   weight:3,  text:'第一杯就對頻，靈感像義式濃縮一樣濃。' },
       { key:'opa',   tag:'歐趴吉',   weight:3,  text:'今天超適合交作業/考試，交前記得再檢查一次！' },
@@ -232,13 +239,21 @@
       { key:'chiik', tag:'吉伊卡哇', weight:2,  text:'烏拉呀哈呀哈！' },
       { key:'chihua',tag:'吉娃娃',   weight:2,  text:'精神滿滿汪汪叫！用小體型衝大能量，勇敢出擊！' },
     
-      // 再多幾張
+      // 
       { key:'wifi',  tag:'網速吉',   weight:3,  text:'今天 Wi-Fi 特別聽話，上傳靈感零延遲。' },
       { key:'wallet',tag:'省錢吉',   weight:3,  text:'想買的剛好特價，想吃的剛好有人請。' },
       { key:'nap',   tag:'小睡吉',   weight:3,  text:'午覺 20 分，精神 +50，黑眼圈 -30。' },
       { key:'brave', tag:'勇者吉',   weight:3,  text:'今天是綿羊勇者的一天，適合執行任務！' },
-      { key:'cat',   tag:'貓咪吉',   weight:2,  text:'被貓盯著看三秒，幸運值 +9。' },
+      { key:'cat',   tag:'喵吉',   weight:2,  text:'被貓盯著看三秒，幸運值 +9。' },
       { key:'ping',  tag:'平安吉',   weight:1,  text:'手機掉了也在口袋，嚇你一下提醒要戴好微笑。' },
+
+      { key:'ghibli',     tag:'吉卜力',   weight:4, text:'今天自帶配樂與治癒濾鏡，像宮崎駿電影的日常。' },
+      { key:'hange',      tag:'漢吉',     weight:2, text:'調整焦距看世界，發揮好奇心和實驗精神！多試就有新發現。' },
+      { key:'chicken',    tag:'大吉大利', weight:3, text:'今晚吃雞！任務穩穩拿大分，記得撿補包。' },
+      { key:'kira',       tag:'吉良吉影', weight:2, text:'低調不惹事，但效率奇高；今天就做安靜的贏家。' },
+      { key:'kichijoji',  tag:'吉祥寺',   weight:2, text:'文青運 +10，轉角遇到好店，心情自動被治癒。' },
+      { key:'jeep',       tag:'吉普車',   weight:2, text:'今天路況全是綠燈，越野型的你一路順暢。' },
+      { key:'kilimanjaro',tag:'吉力馬札羅',weight:2,text:'體力條拉滿，敢攻高坡；一步一步就是巔峰。' },
     ];
 
 
